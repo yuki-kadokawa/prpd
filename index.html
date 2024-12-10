@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Progressive-Resolution Policy Distillation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+
+        header {
+            position: relative;
+            background: url('sand_image.png') no-repeat center center/cover;
+            color: white;
+            height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 0;
+        }
+
+        header h1,
+        header h2,
+        header p {
+            position: relative;
+            z-index: 1;
+            margin: 5px;
+            text-align: center;
+        }
+
+        header h2 {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+            font-weight: normal;
+        }
+
+        header h2 .line {
+            display: inline-block;
+            width: 100px;
+            height: 1px;
+            background-color: white;
+            margin: 0 10px;
+        }
+
+        header .links {
+            margin-top: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        header .links a {
+            display: inline-flex;
+            align-items: center;
+            margin: 5px 10px;
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+        }
+
+        header .links a img {
+            width: 24px;
+            height: 24px;
+            margin-right: 8px;
+        }
+
+        main {
+            max-width: 800px;
+            margin: 20px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        section {
+            margin-bottom: 20px;
+        }
+
+        .method-overview img {
+            width: 70%;
+            height: auto;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin: 10px auto;
+            display: block;
+        }
+
+        .trajectory-img {
+            width: 90%;
+            height: auto;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin: 10px auto;
+            display: block;
+        }
+
+
+        .alg {
+            margin-bottom: 20px;
+        }
+
+        .alg h2 {
+            text-align: center;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+
+        .alg-img {
+            width: 70%;
+            height: auto;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin: 10px auto;
+            display: block;
+        }
+
+        .table-container {
+            max-width: 800px;
+            margin: 20px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .table-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        .table-container .math {
+            text-align: center;
+            font-size: 0.9em;
+        }
+
+        .table-container p {
+            font-size: 1em;
+        }
+
+        .table-container img {
+            width: 70%;
+            height: auto;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin: 10px auto;
+            display: block;
+        }
+
+        #citation pre {
+            overflow-x: auto;
+            white-space: pre;
+            padding: 10px;
+            background: #f4f4f4;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .copy-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 5px 10px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #666;
+        }
+    </style>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+
+<body>
+    <header>
+        <h1>Progressive-Resolution Policy Distillation</h1>
+        <h2>
+            <span class="line"></span>
+            Leveraging Coarse-Resolution Simulations for Time-Efficient Fine-Resolution Policy Learning
+            <span class="line"></span>
+        </h2>
+        <p><strong>Authors:</strong> Yuki Kadokawa*, Hirotaka Tahara, Takamitsu Matsubara</p>
+        <p><strong>Affiliation:</strong> Nara Institute of Science and Technology</p>
+        <div class="links">
+            <a href="https://youtu.be/UxRnZcLIe3c?si=qfItBRnkAvbMaW9W" target="_blank">
+                <img src="https://img.icons8.com/ios-filled/50/ffffff/youtube-play.png" alt="YouTube Icon"> Watch Video
+            </a>
+            <a href="https://arxiv.org/pdf/2207.14561" target="_blank">
+                <img src="https://img.icons8.com/ios-filled/50/ffffff/pdf-2.png" alt="PDF Icon"> View Paper
+            </a>
+        </div>
+    </header>
+    <main>
+        <section id="abstract">
+            <h2>Abstract</h2>
+            <p>
+                In earthwork and construction, excavators often encounter large rocks mixed with various soil
+                conditions, requiring skilled operators. This paper presents a framework for achieving autonomous
+                excavation using reinforcement learning (RL) through a rock excavation simulator. In the simulation,
+                resolution can be defined by the particle size/number in the whole soil space. Fine-resolution
+                simulations closely mimic real-world behavior but demand significant calculation time and challenging
+                sample collection, while coarse-resolution simulations enable faster sample collection but deviate from
+                real-world behavior. To combine the advantages of both resolutions, we explore using policies developed
+                in coarse-resolution simulations for pre-training in fine-resolution simulations. To this end, we
+                propose a novel policy learning framework called Progressive-Resolution Policy Distillation (PRPD),
+                which progressively transfers policies through some middle-resolution simulations with conservative
+                policy transfer to avoid domain gaps that could lead to policy transfer failure. Validation in a rock
+                excavation simulator and nine real-world rock environments demonstrated that PRPD reduced sampling time
+                to less than 1/7 while maintaining task success rates comparable to those achieved through policy
+                learning in a fine-resolution simulation.
+            </p>
+        </section>
+        <section id="method-overview" class="method-overview">
+            <h2>Method Overview</h2>
+            <p>The following figure illustrates the method overview for Progressive-Resolution Policy Distillation.
+                Fine-resolution simulations yield high policy performance but require long learning times, while
+                coarse-resolution simulations allow for quick learning but perform poorly in sim-to-real transfer. Our
+                framework starts with coarse-resolution simulations for quick learning and progressively transfers
+                policies to fine-resolution simulations. Progressive resolution shift with conservative policy transfer
+                is applied to avoid large domain gaps that could lead to policy transfer failure. This approach balances
+                learning time with real-world performance.</p>
+            <img src="snapshot.png" alt="Method Overview">
+        </section>
+        <section id="algorithm">
+            <h2>Algorithm and Parameters</h2>
+            <p>
+                The algorithm and parameter settings for the proposed approach are provided as below:
+            </p>
+        </section>
+        <div class="table-container">
+            <h2>Table I: Learning Parameters of PRPD in Experiments</h2>
+            <p class="math">
+                $$
+                \begin{array}{ll{5.5cm}l}
+                \hline
+                \textbf{Para.} & \textbf{Meaning} & \textbf{Value} \\
+                \hline
+                \alpha_0 & \text{Scaling coefficient of distillation} & 2 \\
+                \gamma & \text{Discount factor of RL} & 0.99 \\
+                \Delta_{1} & \text{Scale of initial resolution [mm]} & 70 \\
+                \Delta_{N} & \text{Scale of final resolution [mm]} & 10 \\
+                \Delta_{\mathcal{R}} & \text{Scale of resolution interval [mm]} & 10 \\
+                \hat{\tau} & \text{Target success rate} & 0.95 \\
+                T & \text{Number of steps per episode} & 128 \\
+                E & \text{Number of episodes per iteration} & 128 \\
+                I & \text{Maximum number of iterations} & 400 \\
+                \epsilon & \text{Cliping parameter of PPO} & 0.2 \\
+                & \text{KL divergence penalty of PPO} & \text{adaptive} \\
+                \hline
+                \end{array}
+                $$
+            </p>
+        </div>
+
+        <div class="table-container">
+            <h2>Table II: Range of Randomized Parameters in the Rock Excavation Simulator</h2>
+            <p class="math">
+                $$
+                \begin{array}{lccc}
+                \hline
+                \textbf{Parameter} & \textbf{w/o DR} & \textbf{min} & \textbf{max} \\
+                \hline
+                \text{Obs. of Rock pos. noise (XY) [mm]} & 0 & -25 & 25 \\
+                \text{Obs. of Rock pos. bias (XY) [mm]} & 0 & -25 & 25 \\
+                \text{Error rate of rock in bucket [⋅]} & 0 & 0.2 & 0.2 \\
+                \text{Ground height bias [mm]} & 0 & -25 & 25 \\
+                \text{Init. bucket pos. bias (XYZ) [mm]} & 0 & -300 & 300 \\
+                \text{Init. rock pos. bias (XYZ) [mm]} & 0 & -30 & 30 \\
+                \text{Bucket torque weight (XYZ) [⋅]} & 1 & 0.8 & 1.2 \\
+                \text{External force to rock [N]} & 0 & 0 & 1 \\
+                \text{Friction coefficient [⋅]} & 1 & 0.8 & 1.2 \\
+                \text{Total soil mass [kg]} & 3 & 2.7 & 3.3 \\
+                \text{Total rock mass [kg]} & 1 & 0.8 & 1.2 \\
+                \text{Total soil volume } [\text{mm}^3] & 125^3 & 120^3 & 130^3 \\
+                \text{Total rock volume } [\text{mm}^3] & 50^3 & 45^3 & 55^3 \\
+                \hline
+                \end{array}
+                $$
+            </p>
+            <p>The parameters were used for learning policies with DR and sampled from the uniform distribution.
+                "XY" and "XYZ" denote whether only the horizontal direction or the vertical direction is included,
+                respectively.</p>
+        </div>
+
+
+
+
+        <div class="table-container">
+            <h2>Pseudo Code of Proposed Framework</h2>
+            <img src="alg.png" alt="Pseudo Code of Proposed Framework" class="alg-img">
+        </div>
+
+        <section id="sim-setting" class="method-overview">
+            <h2>Simulation Settings</h2>
+            <p>The following figure illustrates applying PRPD to our rock excavation simulator.
+                The resolution scheduler progressively changes the simulation resolution.
+                The simulation generator creates the environment (soil, rocks, bucket) at this resolution. At each
+                resolution, agents collect samples and update policies.</p>
+            <img src="sim_setting.png" alt="Method Overview">
+        </section>
+
+        <section id="real-setting" class="method-overview">
+            <h2>Real-World Settings</h2>
+            <p>The following figure illustrates our experimental rock excavation setup.
+                The excavator operates a bucket attached to its arm to remove rocks from the soil. Inputs to the control
+                policy include the bucket's posture \(p^b\) (position and rotation) from the excavator's absolute
+                encoder,
+                rock coordinates \(p^r\) estimated by the camera, and the presence of rocks in the bucket \(f^r\)
+                estimated
+                by the force sensor. The output of the control policy is the position \(a^{\text{XYZ}}\) and rotation of
+                the bucket \(a^{\text{Pitch}}\).
+                The fork-shaped bucket is designed to imitate the features of skeleton buckets.
+            </p>
+            <img src="real_setting.png" alt="Method Overview">
+        </section>
+
+
+
+        <section id="trajectory-overview" class="trajectory">
+            <h2>Results</h2>
+            <p>The following figure illustrates trajectories of robot's snapshots and observation in excavation.
+                <strong>Top:</strong> The upper two rows and lower four rows of the snapshots are environment seen of
+                the real world and simulation, respectively. Simulation observations are randomized by domain
+                randomization.
+                <strong>Bottom:</strong> These plots show trajectories from \( \Delta=70 \) to \( \Delta=10 \) learned
+                by PRPD. "Pos. X", "Pos. Y", and "Pos. Z" mean the relative position between the bucket and the rock.
+                "Rot." means bucket rotation. "Force" means the force function output. "Achiev." means whether the
+                policy achieves the task or not.
+            </p>
+            <img src="trajectory.png" alt="trajectory" class="trajectory-img">
+        </section>
+
+        <section id="summaries">
+            <h2>Summaries</h2>
+            <p>
+                In this paper, we propose time-efficient RL framework PRPD to address the time inefficiency of a
+                fine-resolution rock-excavation simulator. We evaluated PRPD by developing a variable-resolution
+                rock-excavation simulator using Isaac Gym. PRPD significantly reduced policy learning time in the
+                simulator. Additionally, the learned policy was successfully transferred to the real-world environment,
+                robustly removing previously unseen rocks.
+            </p>
+        </section>
+
+        <section id="citation">
+            <h2>Citation</h2>
+            <p>
+                If you use this work, please cite it as follows:
+            </p>
+            <pre>
+<code id="citation-text">
+@article{kadokawa2024prpd,
+  title={Progressive-Resolution Policy Distillation: Leveraging Coarse-Resolution Simulations for Time-Efficient Fine-Resolution Policy Learning},
+  author={Kadokawa, Yuki and Tahara, Hirotaka and Matsubara, Takamitsu},
+  journal={RA-L (under review)},
+  year={2024},
+}
+</code>
+                <button class="copy-button" onclick="copyCitation()">Copy</button>
+            </pre>
+        </section>
+    </main>
+
+    <script>
+        function copyCitation() {
+            const citation = document.getElementById('citation-text').innerText;
+            navigator.clipboard.writeText(citation).then(() => {
+                alert('Citation copied to clipboard!');
+            });
+        }
+    </script>
+</body>
+
+</html>
